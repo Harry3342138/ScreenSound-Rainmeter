@@ -1,0 +1,13 @@
+{
+  "Enabled": false,
+  "RainmeterExe": "C:\\Program Files\\Rainmeter\\Rainmeter.exe",
+  "Bindings": [
+    {
+      "MonitorDeviceName": "\\\\.\\DISPLAY1",
+      "Config": "MyVisualizer\\Bars",
+      "SkinFile": "C:\\Users\\YOUR_NAME\\Documents\\Rainmeter\\Skins\\MyVisualizer\\Bars\\Visualizer.ini",
+      "Measure": "MeasureAudioOutput",
+      "LimitRefreshRate": true
+    }
+  ]
+}

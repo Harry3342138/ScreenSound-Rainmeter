@@ -119,6 +119,9 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private readonly AudioRouterService _routerService;
     private readonly RoutingEngine _routingEngine;
     private readonly SettingsService _settingsService;
+    private RainmeterSyncService _rainmeterSync;
+    [ObservableProperty] private string _rainmeterStatus = "Rainmeter synchronization is off.";
+    public RainmeterSyncService.Options RainmeterOptions => _rainmeterSync.Configuration;
     private readonly UpdateService _updateService;
     private readonly AudioDeviceNotifier _deviceNotifier;
     private readonly DispatcherTimer _deviceRefreshTimer;
@@ -226,6 +229,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         _sessionService = new AudioSessionService();
         _routerService = new AudioRouterService();
         _settingsService = new SettingsService();
+        _rainmeterSync = RainmeterSyncService.Load(RainmeterSyncService.ConfigurationPath);
         _updateService = new UpdateService();
         _routingEngine = new RoutingEngine(_monitorService, _sessionService, _routerService);
 
@@ -494,6 +498,27 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             .ToList();
 
         _routingEngine.UpdateMappings(mappings);
+        var errors = _rainmeterSync.Sync(mappings);
+        RainmeterStatus = _rainmeterSync.LoadError != null ? $"Could not load Rainmeter settings: {_rainmeterSync.LoadError}"
+            : errors.Count > 0 ? string.Join(Environment.NewLine, errors)
+            : !_rainmeterSync.Configuration.Enabled ? "Rainmeter synchronization is off."
+            : $"Following speaker assignments for {_rainmeterSync.Configuration.Bindings.Count} visualizer(s).";
+    }
+
+    public void ApplyRainmeterOptions(RainmeterSyncService.Options options)
+    {
+        RainmeterSyncService.Save(RainmeterSyncService.ConfigurationPath, options);
+        _rainmeterSync = new RainmeterSyncService(options);
+        PushMappingsToEngine();
+    }
+
+    public List<string> RestoreRainmeterBackups()
+    {
+        _rainmeterSync.Configuration.Enabled = false;
+        RainmeterSyncService.Save(RainmeterSyncService.ConfigurationPath, _rainmeterSync.Configuration);
+        var errors = _rainmeterSync.RestoreBackups();
+        RainmeterStatus = errors.Count > 0 ? string.Join(Environment.NewLine, errors) : "Backups restored; synchronization is off.";
+        return errors;
     }
 
     private void PushOverridesToEngine()

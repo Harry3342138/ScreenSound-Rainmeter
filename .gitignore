@@ -92,3 +92,9 @@ $RECYCLE.BIN/
 *.pdb
 *.dll.config
 *.exe.config
+
+# Local audio/skin assignments and backups must never be published.
+RainmeterBindings.json
+settings.json
+install-state.json
+*.screensound.bak

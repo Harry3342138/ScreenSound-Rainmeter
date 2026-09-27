@@ -41,7 +41,7 @@ public class UpdateService
     // Public, unauthenticated endpoint — rate-limited to 60 requests/hour per IP,
     // which is plenty for a user-initiated "check for updates" button.
     private const string LatestReleaseApi =
-        "https://api.github.com/repos/twibster/ScreenSound/releases/latest";
+        "https://api.github.com/repos/Harry3342138/ScreenSound-Rainmeter/releases?per_page=10";
 
     // GitHub requires a User-Agent on every request; the product name is also
     // useful in their server logs if we ever need to correlate a rate-limit bug
@@ -104,8 +104,9 @@ public class UpdateService
             }
 
             using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-            var release = await JsonSerializer.DeserializeAsync<GitHubRelease>(
+            var releases = await JsonSerializer.DeserializeAsync<List<GitHubRelease>>(
                 stream, cancellationToken: ct).ConfigureAwait(false);
+            var release = releases?.FirstOrDefault(r => !r.Draft);
 
             if (release == null || string.IsNullOrWhiteSpace(release.TagName))
                 return new UpdateCheckResult.Failed("Release metadata was empty.");
@@ -118,7 +119,7 @@ public class UpdateService
             // legally contain characters (/, #, spaces) that would otherwise
             // break the path segment.
             string releaseUrl = release.HtmlUrl ??
-                $"https://github.com/twibster/ScreenSound/releases/tag/{Uri.EscapeDataString(release.TagName)}";
+                $"https://github.com/Harry3342138/ScreenSound-Rainmeter/releases/tag/{Uri.EscapeDataString(release.TagName)}";
 
             return CompareSemVer(latest, current) > 0
                 ? new UpdateCheckResult.UpdateAvailable(current, latest, releaseUrl)
@@ -223,6 +224,8 @@ public class UpdateService
     // fields we actually read. System.Text.Json ignores anything else.
     private sealed class GitHubRelease
     {
+        [JsonPropertyName("draft")]
+        public bool Draft { get; set; }
         [JsonPropertyName("tag_name")]
         public string? TagName { get; set; }
 

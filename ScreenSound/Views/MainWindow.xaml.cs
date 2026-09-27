@@ -120,7 +120,7 @@ public partial class MainWindow : UiWindow
             _trayIcon.Icon = Drawing.SystemIcons.Application;
         }
 
-        _trayIcon.Text = "ScreenSound";
+        _trayIcon.Text = "ScreenSound · Rainmeter Edition";
         _trayIcon.Visible = true;
 
         var menu = new Forms.ContextMenuStrip();
@@ -156,6 +156,13 @@ public partial class MainWindow : UiWindow
         Show();
         WindowState = WindowState.Normal;
         Activate();
+    }
+
+    private void RainmeterSettings_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new RainmeterSettingsWindow(_viewModel.Monitors.Select(m => m.Monitor).ToList(),
+            _viewModel.RainmeterOptions, _viewModel.ApplyRainmeterOptions, _viewModel.RestoreRainmeterBackups) { Owner = this };
+        dialog.ShowDialog();
     }
 
     private void ForceClose()

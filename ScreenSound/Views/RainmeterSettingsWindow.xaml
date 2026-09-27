@@ -1,0 +1,70 @@
+<wpfui:UiWindow x:Class="ScreenSound.Views.RainmeterSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Rainmeter visualizers" Width="760" Height="650" MinWidth="640" MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="Segoe UI" FontSize="13">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Text="Sound follows the screen. So can your visualizer." FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"/>
+            <TextBlock Text="Link each Rainmeter skin to a monitor. Its spectrum will follow the speaker you assign on Home."
+                       TextWrapping="Wrap" Margin="0,8,0,16" Opacity="0.75"/>
+            <CheckBox x:Name="EnableSync" Content="Enable Rainmeter synchronization" Margin="0,0,0,16"/>
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel><TextBlock Text="Rainmeter application" Margin="0,0,0,5"/>
+                <TextBox x:Name="RainmeterPath" MinHeight="30" VerticalContentAlignment="Center" ToolTip="Path to Rainmeter.exe"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Browse…" Click="BrowseRainmeter_Click" Padding="12,5" Margin="8,20,0,0"/>
+        </Grid>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl x:Name="BindingItems">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <Button DockPanel.Dock="Right" Content="Remove" Click="RemoveBinding_Click" Tag="{Binding}" Padding="10,4" Margin="10,0,0,0"/>
+                                    <ComboBox ItemsSource="{Binding Monitors}" SelectedItem="{Binding SelectedMonitor}" DisplayMemberPath="DisplayText" MinHeight="30" ToolTip="Monitor for this visualizer"/>
+                                </DockPanel>
+                                <TextBlock Text="Visualizer skin (.ini)" Margin="0,0,0,5"/>
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="Choose skin…" Click="BrowseSkin_Click" Tag="{Binding}" Padding="10,4" Margin="8,0,0,0"/>
+                                    <TextBox Text="{Binding SkinFile}" IsReadOnly="True" MinHeight="30" VerticalContentAlignment="Center" ToolTip="{Binding SkinFile}"/>
+                                </DockPanel>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,10,0"><TextBlock Text="Rainmeter configuration" Margin="0,0,0,5"/>
+                                        <TextBox Text="{Binding Config, UpdateSourceTrigger=PropertyChanged}" MinHeight="30" VerticalContentAlignment="Center" ToolTip="The skin folder name shown in Manage Rainmeter, for example MyVisualizer\Bars"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1"><TextBlock Text="AudioLevel parent measure" Margin="0,0,0,5"/>
+                                        <ComboBox ItemsSource="{Binding Measures}" SelectedItem="{Binding Measure}" MinHeight="30"/>
+                                    </StackPanel>
+                                </Grid>
+                                <CheckBox Content="Limit fast refresh rates to about 30 FPS" IsChecked="{Binding LimitRefreshRate}" Margin="0,12,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <StackPanel Grid.Row="3" Margin="0,10,0,16">
+            <Button Content="+ Add visualizer" Click="AddBinding_Click" HorizontalAlignment="Left" Padding="12,6"/>
+            <TextBlock Text="An original .screensound.bak copy is kept beside each skin before its first change. Disabling sync leaves the last device selected."
+                       TextWrapping="Wrap" Opacity="0.7" Margin="0,10,0,0" FontSize="12"/>
+        </StackPanel>
+        <DockPanel Grid.Row="4">
+            <Button Content="Restore skins and disable" Click="Restore_Click" Padding="10,7" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancel" IsCancel="True" Padding="16,7" Margin="0,0,8,0"/>
+                <Button Content="Save" IsDefault="True" Click="Save_Click" Padding="20,7"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</wpfui:UiWindow>

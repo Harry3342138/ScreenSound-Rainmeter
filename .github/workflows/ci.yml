@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -28,3 +31,6 @@ jobs:
 
       - name: Monitor routing regressions
         run: dotnet run --project tests/MonitorRegression/MonitorRegression.csproj -c Release
+
+      - name: Rainmeter regressions
+        run: dotnet run --project tests/RainmeterRegression/RainmeterRegression.csproj -c Release

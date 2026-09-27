@@ -23,3 +23,14 @@ The native check is intentionally excluded from hosted CI because it requires
 an interactive session with two actual monitors. It exits with code 2 when that
 precondition is missing. A player first discovered after it has already hidden
 its window to the tray has no recorded screen; restore it once before testing.
+
+The Rainmeter suite uses synthetic endpoint IDs, temporary skins and a refresh
+callback. It never touches real Rainmeter settings or changes a speaker route:
+
+```powershell
+dotnet run --project tests/RainmeterRegression/RainmeterRegression.csproj
+```
+
+It checks independent device changes, no-op updates, disconnection/reconnection,
+encoding, backup/restore, refresh failures, corrupt settings, duplicate INI keys,
+parent-measure discovery and update-rate limiting.
