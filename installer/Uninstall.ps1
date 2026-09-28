@@ -8,7 +8,7 @@ foreach ($process in @(Get-Process ScreenSound -ErrorAction SilentlyContinue)) {
     if ($process.Path -eq $exe) { throw 'First restore skins in Settings if desired, then exit ScreenSound from the tray and retry.' }
 }
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-$entry = Get-ItemPropertyValue -LiteralPath $runKey -Name ScreenSound -ErrorAction SilentlyContinue
+$entry = (Get-ItemProperty -LiteralPath $runKey -ErrorAction SilentlyContinue).ScreenSound
 if ($entry -eq ('"' + $exe + '"')) {
     $statePath = Join-Path $actual 'install-state.json'
     $previous = if (Test-Path -LiteralPath $statePath) { (Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json).PreviousStartup } else { $null }

@@ -36,7 +36,7 @@ $settingsPath = Join-Path ([Environment]::GetFolderPath('ApplicationData')) 'Scr
 $settings = $null
 if (Test-Path -LiteralPath $settingsPath) { $settings = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json }
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-$previousRun = Get-ItemPropertyValue -LiteralPath $runKey -Name ScreenSound -ErrorAction SilentlyContinue
+$previousRun = (Get-ItemProperty -LiteralPath $runKey -ErrorAction SilentlyContinue).ScreenSound
 $manifest = Join-Path $destination 'install-state.json'
 if (-not (Test-Path -LiteralPath $manifest)) {
     @{ PreviousStartup = $previousRun } | ConvertTo-Json | Set-Content -LiteralPath $manifest -Encoding UTF8
