@@ -34,6 +34,11 @@ jobs:
           $version = $env:INPUT_VERSION
           if (-not $version) { $version = $env:TAG_NAME -replace '^v', '' }
           ./scripts/Package.ps1 -Version $version
+      - name: Per-user installation smoke test
+        shell: pwsh
+        run: |
+          $package = Get-ChildItem artifacts -Directory -Filter 'staging-self-contained-*' | Select-Object -First 1
+          ./scripts/Test-Install.ps1 -PackageDirectory $package.FullName
       - uses: actions/upload-artifact@v4
         with:
           name: ScreenSound-Rainmeter-packages
